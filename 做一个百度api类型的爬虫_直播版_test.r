@@ -38,8 +38,8 @@ find_inacity <- function(keyname,city,tags){
           location <- c()
           for(page_num_p in 0:19){
                     url <- paste0("http://api.map.baidu.com/place/v2/search?query=",keyname,"&tag=",tags,"&page_size=20","&page_num=",page_num_p,"&scope=2","&region=",city,"&output=json&ak=",AK)
-                    url_string <- URLencode(url)
-                    connect <- url(url_string)
+                    url_string <- URLencode(url)   #将汉字编码
+                    connect <- url(url_string)     #操作字符串
                     temp_geo <- fromJSON(paste(readLines(connect,warn = F), collapse = ""))
                     tem_result <- temp_geo$results
                     tem_result1<-c(tem_result1,tem_result)
@@ -68,11 +68,11 @@ find_inacity <- function(keyname,city,tags){
                                           detail_image_num,detail_comment_num)
                               #数据清理
                               df <- df[!duplicated(df),]
-                    }
+                    }  #end else
                     closeAllConnections()
-          }
+          }  #end for
           df
-}
+}  #end  function
 
 #测试一下，在上海找所有的飞机场
 df_test <- find_inacity(keyname,city,tags)
