@@ -23,7 +23,7 @@ AK <- ""
 keyname <- "交通设施"
 city <- "上海"
 tags <- "交通设施;飞机场"
-page_num_p <- 6
+page_num_p <- 6   #总页数小于20？节省时间？
 
 
 #形成访问api需要的url
@@ -38,15 +38,16 @@ find_inacity <- function(keyname,city,tags){
           location <- c()
           for(page_num_p in 0:19){
                     url <- paste0("http://api.map.baidu.com/place/v2/search?query=",keyname,"&tag=",tags,"&page_size=20","&page_num=",page_num_p,"&scope=2","&region=",city,"&output=json&ak=",AK)
-                    url_string <- URLencode(url)
-                    connect <- url(url_string)
+                    url_string <- URLencode(url)   #将汉语编码
+                    connect <- url(url_string)     #
                     temp_geo <- fromJSON(paste(readLines(connect,warn = F), collapse = ""))
-                    tem_result <- temp_geo$results
+                    tem_result <- temp_geo$results  #tem_result<-list(1<-list(name = list(),location = list(),...,detail_list = list()   )   )
                     tem_result1<-c(tem_result1,tem_result)
                     
-                    location<-data.frame(t(sapply(tem_result1,function(x) x$location)))
+                    location<-data.frame(t(sapply(tem_result1,function(x) x$location)))  #page123,遍历数组，得到坐标的数据框表示
+                                                  
                     
-                    if(dim(location)[2] == 0){
+                    if(dim(location)[2] == 0){   #dim(location)   20  2
                               print("没找到这个地点")
                     }else{
                               name<-sapply(tem_result1,function(x) x$name)
@@ -62,7 +63,7 @@ find_inacity <- function(keyname,city,tags){
                               detail_comment_num <- gsub("NULL",NA,sapply(tem_result1,function(x) x$detail_info$comment_num))
                               
                               
-                              df <- cbind(name,location,address,detail_info,detail_price,
+                              df <- cbind(name,location,address,detail_info,detail_price,   #生成一个叫df的数据框
                                           detail_overall_rating,detail_service_rating,
                                           detail_environment_rating,detail_technology_rating,
                                           detail_image_num,detail_comment_num)
